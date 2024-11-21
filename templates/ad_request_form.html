@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Send Ad Request to {{ influencer.name }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Send Ad Request to {{ influencer.name }}</h2>
+    <hr>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label for="requirements" class="form-label">Requirements</label>
+            <textarea class="form-control" id="requirements" name="requirements" rows="4" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="payment_amount" class="form-label">Payment Amount ($)</label>
+            <input type="number" class="form-control" id="payment_amount" name="payment_amount" step="0.01" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Ad Request</button>
+    </form>
+</div>
+{% endblock %}

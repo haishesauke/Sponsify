@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2>So close! Please fill out some additional details</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <input type="text" class="form-control" id="category" name="category" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="niche" class="form-label">Niche</label>
+                            <input type="text" class="form-control" id="niche" name="niche" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reach" class="form-label">Reach</label>
+                            <input type="number" class="form-control" id="reach" name="reach" required>
+                        </div>
+
+
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

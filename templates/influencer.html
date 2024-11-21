@@ -1,0 +1,117 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Influencer Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-primary">Welcome, {{ influencer.name }}!</h2>
+    <hr>
+
+    <!-- Profile Section -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <h4 class="text-secondary">Profile</h4>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <strong>Name:</strong> {{ influencer.name }}
+                </li>
+                <li class="list-group-item">
+                    <strong>Category:</strong> {{ influencer.category }}
+                </li>
+                <li class="list-group-item">
+                    <strong>Niche:</strong> {{ influencer.niche }}
+                </li>
+                <li class="list-group-item">
+                    <strong>Reach:</strong> {{ influencer.reach }}
+                </li>
+            </ul>
+            <a href="{{ url_for('update_influencer_profile') }}" class="btn btn-primary mt-3">Edit Profile</a>
+        </div>
+
+        <!-- Ad Requests Section -->
+        <div class="col-md-8">
+            <h4 class="text-secondary">Ad Requests</h4>
+            {% if ad_requests %}
+            <table class="table table-hover table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Campaign Name</th>
+                        <th scope="col">Sponsor</th>
+                        <th scope="col">Requirements</th>
+                        <th scope="col">Payment</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ad_request in ad_requests %}
+                    <tr>
+                        <td>{{ ad_request.campaign.name }}</td>
+                        <td>{{ ad_request.campaign.sponsor.company_name }}</td>
+                        <td>{{ ad_request.requirements }}</td>
+                        <td>${{ ad_request.payment_amount }}</td>
+                        <td>
+                            {% if ad_request.status == 'Pending' %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                            {% elif ad_request.status == 'Accepted' %}
+                            <span class="badge bg-success">Accepted</span>
+                            {% elif ad_request.status == 'Rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if ad_request.status == 'Pending' %}
+                            <form action="{{ url_for('accept_ad_request', ad_request_id=ad_request.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                            </form>
+                            <form action="{{ url_for('reject_ad_request', ad_request_id=ad_request.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                            </form>
+                            {% else %}
+                            <p class="text-muted">No actions available</p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-muted">No ad requests found.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Completed Campaigns Section -->
+    <div class="row">
+        <div class="col-12">
+            <h4 class="text-secondary">Completed Campaigns</h4>
+            {% if completed_campaigns %}
+            <table class="table table-hover table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Campaign Name</th>
+                        <th scope="col">Sponsor</th>
+                        <th scope="col">Total Payment</th>
+                        <th scope="col">Completion Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for campaign in completed_campaigns %}
+                    <tr>
+                        <td>{{ campaign.name }}</td>
+                        <td>{{ campaign.sponsor.name }}</td>
+                        <td>${{ campaign.total_payment }}</td>
+                        <td>{{ campaign.completion_date.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-muted">No completed campaigns found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

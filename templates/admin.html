@@ -1,0 +1,175 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Admin Dashboard - Sponsify
+{% endblock %}
+
+{% block style %}
+    <style>
+        /* General Styles */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+        .badge {
+            font-size: 0.9em;
+            padding: 0.5em 0.75em;
+        }
+        .btn-sm {
+            padding: 0.4rem 0.75rem;
+        }
+
+        /* Background colors */
+        .dashboard-header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 2rem 0;
+            border-radius: 10px;
+        }
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .dashboard-stats {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        /* Table styles */
+        .table thead {
+            background-color: #007bff;
+            color: white;
+        }
+        .flagged {
+            color: red;
+            font-weight: bold;
+        }
+        .flagged td {
+            background-color: #f8d7da;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header text-center mb-5">
+        <h1>Admin Dashboard</h1>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Campaigns</h5>
+                    <p class="card-text">{{ total_campaigns }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Flagged Campaigns</h5>
+                    <p class="card-text">{{ flagged_campaigns }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Ad Requests</h5>
+                    <p class="card-text">{{ total_ad_requests }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Campaigns Table -->
+    <h2 class="text-primary">Campaigns</h2>
+    <div class="dashboard-stats mb-5">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for campaign in campaigns %}
+                <tr class="{% if campaign.is_flagged %}flagged{% endif %}">
+                    <td>{{ campaign.name }}</td>
+                    <td>{{ campaign.description }}</td>
+                    <td>
+                        {% if campaign.is_flagged %}
+                            <span class="badge bg-danger">Flagged</span>
+                        {% else %}
+                            <span class="badge bg-success">Active</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not campaign.is_flagged %}
+                        <form action="{{ url_for('flag_campaign', campaign_id=campaign.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-warning btn-sm">
+                                <i class="fas fa-flag"></i> Flag
+                            </button>
+                        </form>
+                        {% else %}
+                            <span class="text-muted">Flagged</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Ad Requests Table -->
+    <h2 class="text-primary">Ad Requests</h2>
+    <div class="dashboard-stats">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Campaign</th>
+                    <th>Influencer</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in ad_requests %}
+                <tr>
+                    <td>{{ request.campaign.name }}</td>
+                    <td>{{ request.influencer.name }}</td>
+                    <td>
+                        {% if request.status == 'Pending' %}
+                            <span class="badge bg-warning">Pending</span>
+                        {% elif request.status == 'Accepted' %}
+                            <span class="badge bg-success">Accepted</span>
+                        {% else %}
+                            <span class="badge bg-danger">Rejected</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('change_ad_request_status', request_id=request.id, new_status='Accepted') }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                        </form>
+                        <form action="{{ url_for('change_ad_request_status', request_id=request.id, new_status='Rejected') }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
